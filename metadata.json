@@ -1,0 +1,7 @@
+{
+  "name": "Everyone Connect Events",
+  "description": "A cultural event hosting platform with Liberian themes, featuring attendee dashboards, organizer tools with AI assistance, and administrative controls.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
