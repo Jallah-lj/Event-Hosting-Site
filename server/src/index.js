@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createServer } from 'http';
 import dotenv from 'dotenv';
 import { initializeDatabase } from './db/init.js';
+import { initializeSocket } from './services/socketService.js';
 import authRoutes from './routes/auth.js';
 import usersRoutes from './routes/users.js';
 import eventsRoutes from './routes/events.js';
@@ -16,6 +18,9 @@ import teamRoutes from './routes/team.js';
 import settingsRoutes from './routes/settings.js';
 import analyticsRoutes from './routes/analytics.js';
 import uploadRoutes from './routes/upload.js';
+import calendarRoutes from './routes/calendar.js';
+import refundsRoutes from './routes/refunds.js';
+import { apiLimiter, authLimiter, passwordResetLimiter } from './middleware/rateLimiter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,6 +38,12 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// Apply rate limiting
+app.use('/api/', apiLimiter);
+app.use('/api/auth/signin', authLimiter);
+app.use('/api/auth/signup', authLimiter);
+app.use('/api/auth/forgot-password', passwordResetLimiter);
 
 // Serve static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -53,6 +64,8 @@ app.use('/api/team', teamRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/calendar', calendarRoutes);
+app.use('/api/refunds', refundsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -68,8 +81,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+// Create HTTP server and initialize WebSocket
+const server = createServer(app);
+const io = initializeSocket(server);
+
+// Make io available to routes
+app.set('io', io);
+
+server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🔌 WebSocket server ready`);
   console.log(`📦 Database: SQLite (local)`);
   console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
 });

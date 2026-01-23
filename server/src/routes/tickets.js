@@ -2,6 +2,7 @@ import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../db/init.js';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { notifyUser, notifyEventRoom, NotificationTypes } from '../services/socketService.js';
 
 const router = express.Router();
 
@@ -255,6 +256,23 @@ router.post('/purchase', authenticateToken, (req, res) => {
       VALUES (?, 'FEE', 'Platform Commission (10%)', ?, datetime('now'), 'COMPLETED', 'System', ?, ?)
     `).run(uuidv4(), totalAmount * 0.1, event.title, event.organizer_id);
 
+    // Send real-time notification to organizer
+    notifyUser(event.organizer_id, NotificationTypes.TICKET_PURCHASED, {
+      eventId,
+      eventName: event.title,
+      attendeeName: user.name,
+      quantity,
+      tierName,
+      totalAmount
+    });
+
+    // Also notify the event room for live dashboard updates
+    notifyEventRoom(eventId, NotificationTypes.SALES_UPDATE, {
+      eventId,
+      newTickets: quantity,
+      totalSales: totalAmount
+    });
+
     res.status(201).json({
       message: `${quantity} ticket(s) purchased successfully`,
       tickets
@@ -289,6 +307,18 @@ router.post('/:id/verify', authenticateToken, requireRole('ORGANIZER', 'ADMIN'),
     db.prepare(`
       UPDATE tickets SET used = 1, check_in_time = datetime('now') WHERE id = ?
     `).run(req.params.id);
+
+    // Get event details for notification
+    const event = db.prepare('SELECT title FROM events WHERE id = ?').get(ticket.event_id);
+
+    // Send real-time notification to event room
+    notifyEventRoom(ticket.event_id, NotificationTypes.TICKET_CHECKED_IN, {
+      eventId: ticket.event_id,
+      eventName: event?.title,
+      ticketId: ticket.id,
+      attendeeName: ticket.attendee_name,
+      tierName: ticket.tier_name
+    });
 
     res.json({ message: 'Ticket verified and checked in' });
   } catch (error) {
