@@ -129,7 +129,7 @@ router.get('/', authenticateToken, (req, res) => {
 });
 
 // Validate ticket (for scanner app)
-router.post('/validate', authenticateToken, requireRole('ORGANIZER', 'ADMIN'), (req, res) => {
+router.post('/validate', authenticateToken, requireRole('ORGANIZER', 'ADMIN', 'SCANNER'), (req, res) => {
   try {
     const { ticketId, eventId } = req.body;
 
@@ -149,8 +149,11 @@ router.post('/validate', authenticateToken, requireRole('ORGANIZER', 'ADMIN'), (
       return res.json({ valid: false, message: 'Ticket not found for this event' });
     }
 
-    // Verify ownership
-    if (req.user.role !== 'ADMIN' && req.user.id !== ticket.organizer_id) {
+    // Verify ownership or team permission
+    const isOrganizer = req.user.id === ticket.organizer_id;
+    const isTeamMember = req.user.role === 'SCANNER' && req.user.organizerId === ticket.organizer_id;
+
+    if (req.user.role !== 'ADMIN' && !isOrganizer && !isTeamMember) {
       return res.status(403).json({ error: 'Not authorized to validate tickets for this event' });
     }
 

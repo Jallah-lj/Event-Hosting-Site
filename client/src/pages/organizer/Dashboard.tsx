@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Calendar, Users, DollarSign, TrendingUp, Eye, Edit2 } from 'lucide-react';
+import { Plus, Calendar, Users, QrCode, Edit2, Ticket, ScanLine } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/Toast';
@@ -8,6 +8,7 @@ import { Event, Transaction } from '../../types';
 import eventsService from '../../services/eventsService';
 import { transactionsService } from '../../services/dataServices';
 import { getErrorMessage } from '../../services/api';
+import AnalyticsChart from '../../components/AnalyticsChart';
 
 const OrganizerDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -37,53 +38,12 @@ const OrganizerDashboard: React.FC = () => {
     }
   };
 
-  const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
-  const totalAttendees = events.reduce((sum, e) => sum + e.attendeeCount, 0);
-  const approvedEvents = events.filter(e => e.status === 'APPROVED');
-  const pendingEvents = events.filter(e => e.status === 'PENDING');
-
-  const stats = [
-    {
-      label: 'Total Events',
-      value: events.length,
-      icon: Calendar,
-      color: 'blue',
-      sublabel: `${approvedEvents.length} approved, ${pendingEvents.length} pending`
-    },
-    {
-      label: 'Total Attendees',
-      value: totalAttendees,
-      icon: Users,
-      color: 'green',
-      sublabel: 'Across all events'
-    },
-    {
-      label: 'Total Revenue',
-      value: `$${totalRevenue.toFixed(2)}`,
-      icon: DollarSign,
-      color: 'yellow',
-      sublabel: `${transactions.length} transactions`
-    },
-    {
-      label: 'Avg. Attendance',
-      value: events.length > 0 ? Math.round(totalAttendees / events.length) : 0,
-      icon: TrendingUp,
-      color: 'purple',
-      sublabel: 'Per event'
-    },
-  ];
-
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="h-8 bg-gray-200 rounded w-1/3 animate-pulse" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="bg-white rounded-xl p-6 animate-pulse">
-              <div className="h-8 bg-gray-200 rounded mb-2" />
-              <div className="h-4 bg-gray-100 rounded w-1/2" />
-            </div>
-          ))}
+        <div className="grid grid-cols-1 gap-6">
+          <div className="bg-white rounded-xl p-6 h-[400px] animate-pulse" />
         </div>
       </div>
     );
@@ -97,30 +57,72 @@ const OrganizerDashboard: React.FC = () => {
           <p className="text-gray-500 dark:text-gray-400">Manage your events and track performance</p>
         </div>
 
-        <Link to="/organizer/create">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Create Event
-          </Button>
+        <div className="flex gap-2">
+          <Link to="/organizer/team">
+            <Button variant="secondary">
+              <Users className="w-4 h-4 mr-2" />
+              Team
+            </Button>
+          </Link>
+          <Link to="/organizer/create">
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Create Event
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Quick Action Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link 
+          to="/organizer/attendees" 
+          className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 hover:border-liberia-blue dark:hover:border-liberia-blue transition-colors group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:bg-liberia-blue transition-colors">
+              <Users className="w-6 h-6 text-liberia-blue group-hover:text-white transition-colors" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white">All Attendees</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">View & manage all event attendees</p>
+            </div>
+          </div>
+        </Link>
+
+        <Link 
+          to="/organizer/scanner" 
+          className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 hover:border-green-500 dark:hover:border-green-500 transition-colors group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:bg-green-500 transition-colors">
+              <ScanLine className="w-6 h-6 text-green-600 group-hover:text-white transition-colors" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white">Scan Tickets</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Check-in attendees with QR scanner</p>
+            </div>
+          </div>
+        </Link>
+
+        <Link 
+          to="/organizer/create" 
+          className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 hover:border-purple-500 dark:hover:border-purple-500 transition-colors group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center group-hover:bg-purple-500 transition-colors">
+              <Ticket className="w-6 h-6 text-purple-600 group-hover:text-white transition-colors" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-white">Create Event</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Set up a new event with tickets</p>
+            </div>
+          </div>
         </Link>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.label}</span>
-              <stat.icon className={`w-5 h-5 text-${stat.color}-500`} />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</div>
-            <div className="text-xs text-gray-400">{stat.sublabel}</div>
-          </div>
-        ))}
-      </div>
+      {/* Live Analytics Section */}
+      <AnalyticsChart />
 
       {/* Events List */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
@@ -173,19 +175,22 @@ const OrganizerDashboard: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <Link to={`/organizer/attendees/${event.id}`}>
-                    <Button variant="ghost" size="sm">
+                  <Link to={`/organizer/attendees/${event.id}`} title="View Attendees">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-1">
                       <Users className="w-4 h-4" />
+                      <span className="hidden md:inline text-xs">Attendees</span>
                     </Button>
                   </Link>
-                  <Link to={`/organizer/scanner/${event.id}`}>
-                    <Button variant="ghost" size="sm">
-                      <Eye className="w-4 h-4" />
+                  <Link to={`/organizer/scanner/${event.id}`} title="Scan Tickets">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-1">
+                      <ScanLine className="w-4 h-4" />
+                      <span className="hidden md:inline text-xs">Scan</span>
                     </Button>
                   </Link>
-                  <Link to={`/organizer/edit/${event.id}`}>
-                    <Button variant="ghost" size="sm">
+                  <Link to={`/organizer/edit/${event.id}`} title="Edit Event">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-1">
                       <Edit2 className="w-4 h-4" />
+                      <span className="hidden md:inline text-xs">Edit</span>
                     </Button>
                   </Link>
                 </div>

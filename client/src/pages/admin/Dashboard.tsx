@@ -8,6 +8,8 @@ import eventsService from '../../services/eventsService';
 import usersService from '../../services/usersService';
 import { transactionsService } from '../../services/dataServices';
 import { getErrorMessage } from '../../services/api';
+import AdminAnalyticsChart from '../../components/AdminAnalyticsChart';
+import Admin3DBarChart from '../../components/Admin3DBarChart';
 
 const AdminDashboard: React.FC = () => {
   const { addToast } = useToast();
@@ -90,6 +92,12 @@ const AdminDashboard: React.FC = () => {
         <h1 className="text-2xl font-serif font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
         <p className="text-gray-500 dark:text-gray-400">Manage your platform</p>
       </div>
+
+      {/* 3D Bar Chart - Platform Overview */}
+      <Admin3DBarChart />
+
+      {/* Advanced Analytics Chart */}
+      <AdminAnalyticsChart />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

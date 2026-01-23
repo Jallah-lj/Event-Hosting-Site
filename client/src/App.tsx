@@ -19,12 +19,23 @@ import OrganizerDashboard from './pages/organizer/Dashboard';
 import OrganizerCreateEvent from './pages/organizer/CreateEvent';
 import OrganizerScanner from './pages/organizer/Scanner';
 import OrganizerAttendees from './pages/organizer/Attendees';
+import OrganizerSettings from './pages/organizer/Settings';
+import TeamManagement from './pages/organizer/TeamManagement';
+
+import ScannerDashboard from './pages/scanner/Dashboard';
+
+import ModeratorDashboard from './pages/moderator/Dashboard';
+import ModeratorAttendees from './pages/moderator/Attendees';
+import ModeratorScanner from './pages/moderator/Scanner';
+import ModeratorBroadcasts from './pages/moderator/Broadcasts';
 
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminEvents from './pages/admin/Events';
 import AdminUsers from './pages/admin/Users';
 import AdminFinance from './pages/admin/Finance';
 import AdminSettings from './pages/admin/Settings';
+import AdminModeration from './pages/admin/Moderation';
+import AdminAnalytics from './pages/admin/Analytics';
 
 import EventDetails from './pages/EventDetails';
 import Layout from './components/Layout';
@@ -65,6 +76,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
         return <Navigate to="/admin" replace />;
       case UserRole.ORGANIZER:
         return <Navigate to="/organizer" replace />;
+      case UserRole.SCANNER:
+        return <Navigate to="/scanner" replace />;
+      case UserRole.ANALYST:
+        return <Navigate to="/organizer" replace />;
+      case UserRole.MODERATOR:
+        return <Navigate to="/moderator" replace />;
       case UserRole.ATTENDEE:
       default:
         return <Navigate to="/dashboard" replace />;
@@ -89,6 +106,12 @@ const App: React.FC = () => {
         return '/admin';
       case UserRole.ORGANIZER:
         return '/organizer';
+      case UserRole.SCANNER:
+        return '/scanner';
+      case UserRole.ANALYST:
+        return '/organizer'; // Analysts see the organizer dashboard
+      case UserRole.MODERATOR:
+        return '/moderator';
       case UserRole.ATTENDEE:
       default:
         return '/dashboard';
@@ -109,7 +132,7 @@ const App: React.FC = () => {
           isAuthenticated ? <Navigate to={getHomeRoute()} replace /> : <SignUp />
         } />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-        
+
         {/* Public Event Details */}
         <Route path="/events/:id" element={<EventDetails />} />
 
@@ -137,7 +160,7 @@ const App: React.FC = () => {
 
         {/* Organizer Routes */}
         <Route path="/organizer" element={
-          <ProtectedRoute allowedRoles={[UserRole.ORGANIZER]}>
+          <ProtectedRoute allowedRoles={[UserRole.ORGANIZER, UserRole.ANALYST]}>
             <OrganizerDashboard />
           </ProtectedRoute>
         } />
@@ -152,13 +175,52 @@ const App: React.FC = () => {
           </ProtectedRoute>
         } />
         <Route path="/organizer/scanner/:eventId" element={
-          <ProtectedRoute allowedRoles={[UserRole.ORGANIZER]}>
+          <ProtectedRoute allowedRoles={[UserRole.ORGANIZER, UserRole.SCANNER]}>
             <OrganizerScanner />
           </ProtectedRoute>
         } />
         <Route path="/organizer/attendees/:eventId" element={
           <ProtectedRoute allowedRoles={[UserRole.ORGANIZER]}>
             <OrganizerAttendees />
+          </ProtectedRoute>
+        } />
+        <Route path="/organizer/team" element={
+          <ProtectedRoute allowedRoles={[UserRole.ORGANIZER]}>
+            <TeamManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/organizer/settings" element={
+          <ProtectedRoute allowedRoles={[UserRole.ORGANIZER]}>
+            <OrganizerSettings />
+          </ProtectedRoute>
+        } />
+
+        {/* Scanner Routes */}
+        <Route path="/scanner" element={
+          <ProtectedRoute allowedRoles={[UserRole.SCANNER]}>
+            <ScannerDashboard />
+          </ProtectedRoute>
+        } />
+
+        {/* Moderator Routes */}
+        <Route path="/moderator" element={
+          <ProtectedRoute allowedRoles={[UserRole.MODERATOR]}>
+            <ModeratorDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/moderator/attendees" element={
+          <ProtectedRoute allowedRoles={[UserRole.MODERATOR]}>
+            <ModeratorAttendees />
+          </ProtectedRoute>
+        } />
+        <Route path="/moderator/scanner" element={
+          <ProtectedRoute allowedRoles={[UserRole.MODERATOR]}>
+            <ModeratorScanner />
+          </ProtectedRoute>
+        } />
+        <Route path="/moderator/broadcasts" element={
+          <ProtectedRoute allowedRoles={[UserRole.MODERATOR]}>
+            <ModeratorBroadcasts />
           </ProtectedRoute>
         } />
 
@@ -185,12 +247,12 @@ const App: React.FC = () => {
         } />
         <Route path="/admin/reports" element={
           <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
-            <AdminDashboard />
+            <AdminModeration />
           </ProtectedRoute>
         } />
         <Route path="/admin/analytics" element={
           <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
-            <AdminDashboard />
+            <AdminAnalytics />
           </ProtectedRoute>
         } />
         <Route path="/admin/settings" element={

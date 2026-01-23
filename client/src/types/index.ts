@@ -2,7 +2,10 @@ export enum UserRole {
   GUEST = 'GUEST',
   ATTENDEE = 'ATTENDEE',
   ORGANIZER = 'ORGANIZER',
-  ADMIN = 'ADMIN'
+  ADMIN = 'ADMIN',
+  SCANNER = 'SCANNER',
+  ANALYST = 'ANALYST',
+  MODERATOR = 'MODERATOR'
 }
 
 export interface PlatformSettings {
@@ -36,6 +39,11 @@ export interface UserPreferences {
     email: boolean;
     sms: boolean;
     promotional: boolean;
+    eventReminders?: boolean;
+  };
+  privacy?: {
+    profileVisible: boolean;
+    showAttendance: boolean;
   };
 }
 
@@ -47,6 +55,14 @@ export interface TicketTier {
   allocation?: number;
   quantity?: number;
   benefits?: string;
+}
+
+export interface Sponsor {
+  id: string;
+  name: string;
+  logoUrl: string;
+  tier: 'platinum' | 'gold' | 'silver' | 'bronze';
+  website?: string;
 }
 
 export interface Event {
@@ -69,6 +85,7 @@ export interface Event {
   virtualLink?: string;
   refundPolicy?: string;
   ageRestriction?: string;
+  sponsors?: Sponsor[];
 }
 
 export interface Ticket {
@@ -87,8 +104,11 @@ export interface Ticket {
   event?: {
     title: string;
     date: string;
+    endDate?: string;
     location: string;
     imageUrl?: string;
+    organizerName?: string;
+    sponsors?: Sponsor[];
   };
 }
 
@@ -96,6 +116,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   role: UserRole;
   profilePicture?: string;
   status?: 'Active' | 'Suspended';

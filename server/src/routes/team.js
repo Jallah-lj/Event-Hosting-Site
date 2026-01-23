@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', authenticateToken, requireRole('ORGANIZER', 'ADMIN'), (req, res) => {
   try {
     let members;
-    
+
     if (req.user.role === 'ADMIN') {
       members = db.prepare('SELECT * FROM team_members ORDER BY created_at DESC').all();
     } else {
@@ -31,29 +31,62 @@ router.get('/', authenticateToken, requireRole('ORGANIZER', 'ADMIN'), (req, res)
   }
 });
 
+import bcrypt from 'bcryptjs';
+
+// ...
+
 // Add team member
 router.post('/', authenticateToken, requireRole('ORGANIZER', 'ADMIN'), (req, res) => {
   try {
-    const { name, email, role } = req.body;
+    const { name, email, role, password = 'Password@123' } = req.body;
 
     if (!name || !email || !role) {
       return res.status(400).json({ error: 'Name, email, and role are required' });
     }
 
+    // 1. Check if user exists
+    let userId = uuidv4();
+    const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+
+    if (existingUser) {
+      // If user exists, we just link them (assuming they are not already a team member for someone else?)
+      // For simplicity, we'll allow linking existing users, or fail if they are an ORGANIZER themselves.
+      userId = existingUser.id;
+      // Optionally update their role if they were just an ATTENDEE?
+      // db.prepare("UPDATE users SET role = ? WHERE id = ?").run(role, userId);
+    } else {
+      // Create new user
+      const passwordHash = bcrypt.hashSync(password, 10);
+      db.prepare(`
+          INSERT INTO users (id, name, email, password_hash, role, status, joined, verified)
+          VALUES (?, ?, ?, ?, ?, 'Active', datetime('now'), 1)
+        `).run(userId, name, email, passwordHash, role);
+
+      // Create preferences
+      db.prepare(`INSERT INTO user_preferences (id, user_id) VALUES (?, ?)`).run(uuidv4(), userId);
+    }
+
+    // 2. Add to team_members
     const memberId = uuidv4();
+
+    // Check if already in team
+    const existingMember = db.prepare('SELECT id FROM team_members WHERE email = ? AND organizer_id = ?').get(email, req.user.id);
+    if (existingMember) {
+      return res.status(400).json({ error: 'User is already in your team' });
+    }
 
     db.prepare(`
       INSERT INTO team_members (id, name, email, role, status, scans, organizer_id)
-      VALUES (?, ?, ?, ?, 'PENDING', 0, ?)
+      VALUES (?, ?, ?, ?, 'ACTIVE', 0, ?)
     `).run(memberId, name, email, role, req.user.id);
 
     res.status(201).json({
-      message: 'Team member invited',
-      member: { id: memberId, name, email, role, status: 'PENDING', scans: 0 }
+      message: 'Team member account created',
+      member: { id: memberId, name, email, role, status: 'ACTIVE', scans: 0 }
     });
   } catch (error) {
     console.error('Add team member error:', error);
-    res.status(500).json({ error: 'Failed to add team member' });
+    res.status(500).json({ error: 'Failed to add team member. ' + error.message });
   }
 });
 

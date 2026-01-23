@@ -52,6 +52,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           { label: 'Create Event', icon: PlusCircle, path: '/organizer/create' },
           { label: 'Scan Tickets', icon: QrCode, path: '/organizer/scanner' },
           { label: 'Attendees', icon: Users, path: '/organizer/attendees' },
+          { label: 'Team', icon: Users, path: '/organizer/team' },
+          { label: 'Settings', icon: Settings, path: '/organizer/settings' },
+        ];
+      case UserRole.MODERATOR:
+        return [
+          { label: 'Dashboard', icon: Home, path: '/moderator' },
+          { label: 'Attendees', icon: Users, path: '/moderator/attendees' },
+          { label: 'Scan Tickets', icon: QrCode, path: '/moderator/scanner' },
+          { label: 'Broadcasts', icon: Flag, path: '/moderator/broadcasts' },
         ];
       case UserRole.ADMIN:
         return [

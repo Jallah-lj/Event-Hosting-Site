@@ -39,7 +39,8 @@ export const ticketsService = {
   },
 
   async markUsed(id: string): Promise<{ message: string }> {
-    const response = await api.put(`/tickets/${id}/use`);
+    // Alias to verify
+    const response = await api.post(`/tickets/${id}/verify`);
     return response.data;
   },
 

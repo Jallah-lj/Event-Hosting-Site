@@ -39,6 +39,8 @@ const AdminUsers: React.FC = () => {
   };
 
   const handleUpdateRole = async (userId: string, role: 'ATTENDEE' | 'ORGANIZER' | 'ADMIN') => {
+    if (!confirm(`Are you sure you want to change this user's role to ${role}?`)) return;
+
     try {
       await usersService.updateRole(userId, role);
       setUsers(users.map(u => u.id === userId ? { ...u, role: role as unknown as UserRole } : u));
@@ -205,7 +207,7 @@ const AdminUsers: React.FC = () => {
                       onChange={(e) => handleUpdateRole(user.id, e.target.value as any)}
                       className={`px-2 py-1 rounded-full text-xs font-medium border-0 ${roleColors[user.role]}`}
                     >
-                      <option value="ATTENDEE">ATTENDEE</option>
+                      {user.role === 'ATTENDEE' && <option value="ATTENDEE">ATTENDEE</option>}
                       <option value="ORGANIZER">ORGANIZER</option>
                       <option value="ADMIN">ADMIN</option>
                     </select>

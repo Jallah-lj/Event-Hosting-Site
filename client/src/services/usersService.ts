@@ -33,13 +33,12 @@ export const usersService = {
   },
 
   async updateRole(userId: string, role: string): Promise<{ message: string }> {
-    const response = await api.put(`/users/${userId}/role`, { role });
+    const response = await api.put(`/users/${userId}`, { role });
     return response.data;
   },
 
   async updateStatus(userId: string, status: string): Promise<{ message: string }> {
-    // Note: This endpoint might need to be created in backend or use generic update
-    const response = await api.put(`/users/${userId}/status`, { status });
+    const response = await api.put(`/users/${userId}`, { status });
     return response.data;
   },
 

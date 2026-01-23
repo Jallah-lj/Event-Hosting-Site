@@ -97,9 +97,13 @@ router.post('/signin', async (req, res) => {
     // Update last active
     db.prepare("UPDATE users SET last_active = datetime('now') WHERE id = ?").run(user.id);
 
+    // Check for team membership to get organizer context
+    const teamMember = db.prepare('SELECT organizer_id FROM team_members WHERE email = ?').get(email);
+    const effectiveOrganizerId = teamMember ? teamMember.organizer_id : user.id;
+
     // Generate token
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, email: user.email, role: user.role, organizerId: effectiveOrganizerId },
       process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: '7d' }
     );

@@ -1044,6 +1044,11 @@ export const OrganizerPanel: React.FC<OrganizerPanelProps> = ({
                             <button onClick={() => setPreviewRole('Analyst')} className="text-xs text-blue-500 hover:underline mt-2">Preview as Analyst</button>
                         </div>
                         <div className="p-3 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-100 dark:border-gray-700">
+                            <h4 className="font-bold text-sm mb-1 flex items-center"><Users className="w-4 h-4 mr-2 text-orange-600" /> Moderator</h4>
+                            <p className="text-xs text-gray-500">Manage attendees, send broadcasts, and moderate event content. No financial access.</p>
+                            <button onClick={() => setPreviewRole('Moderator')} className="text-xs text-blue-500 hover:underline mt-2">Preview as Moderator</button>
+                        </div>
+                        <div className="p-3 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-100 dark:border-gray-700">
                             <h4 className="font-bold text-sm mb-1 flex items-center"><QrCode className="w-4 h-4 mr-2 text-green-600" /> Scanner</h4>
                             <p className="text-xs text-gray-500">Only access to the Ticket Scanner feature for checking in guests.</p>
                             <button onClick={() => setPreviewRole('Scanner')} className="text-xs text-blue-500 hover:underline mt-2">Preview as Scanner</button>
@@ -1071,6 +1076,7 @@ export const OrganizerPanel: React.FC<OrganizerPanelProps> = ({
                                 <select className={inputClass} value={inviteRole} onChange={e => setInviteRole(e.target.value)}>
                                     <option value="Scanner">Scanner (Check-in only)</option>
                                     <option value="Analyst">Analyst (View Data)</option>
+                                    <option value="Moderator">Moderator (Manage Attendees)</option>
                                     <option value="Manager">Manager (Full Access)</option>
                                 </select>
                             </div>

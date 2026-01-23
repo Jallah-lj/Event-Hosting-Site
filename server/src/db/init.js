@@ -21,7 +21,7 @@ export function initializeDatabase() {
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT,
-      role TEXT CHECK(role IN ('GUEST', 'ATTENDEE', 'ORGANIZER', 'ADMIN')) DEFAULT 'ATTENDEE',
+      role TEXT CHECK(role IN ('GUEST', 'ATTENDEE', 'ORGANIZER', 'ADMIN', 'SCANNER', 'ANALYST', 'MODERATOR')) DEFAULT 'ATTENDEE',
       status TEXT CHECK(status IN ('Active', 'Suspended')) DEFAULT 'Active',
       verified INTEGER DEFAULT 0,
       profile_picture TEXT,
@@ -216,6 +216,39 @@ export function initializeDatabase() {
       date TEXT DEFAULT CURRENT_TIMESTAMP,
       author TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `);
+
+  // Organizer Settings table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS organizer_settings (
+      id TEXT PRIMARY KEY,
+      user_id TEXT UNIQUE NOT NULL,
+      business_name TEXT,
+      business_description TEXT,
+      website TEXT,
+      phone TEXT,
+      address TEXT,
+      payout_method TEXT CHECK(payout_method IN ('bank', 'mobile_money', 'paypal')) DEFAULT 'mobile_money',
+      bank_name TEXT,
+      account_number TEXT,
+      account_name TEXT,
+      mobile_provider TEXT,
+      mobile_number TEXT,
+      paypal_email TEXT,
+      notify_ticket_sold INTEGER DEFAULT 1,
+      notify_daily_summary INTEGER DEFAULT 0,
+      notify_weekly_report INTEGER DEFAULT 1,
+      notify_refund_request INTEGER DEFAULT 1,
+      notify_event_reminders INTEGER DEFAULT 1,
+      notify_team_updates INTEGER DEFAULT 1,
+      default_venue TEXT,
+      default_refund_policy TEXT DEFAULT 'Refunds available up to 24 hours before event',
+      auto_confirm_tickets INTEGER DEFAULT 1,
+      require_attendee_info INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
   `);

@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { initializeDatabase } from './db/init.js';
 import authRoutes from './routes/auth.js';
@@ -12,6 +14,11 @@ import referralsRoutes from './routes/referrals.js';
 import broadcastsRoutes from './routes/broadcasts.js';
 import teamRoutes from './routes/team.js';
 import settingsRoutes from './routes/settings.js';
+import analyticsRoutes from './routes/analytics.js';
+import uploadRoutes from './routes/upload.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -20,12 +27,15 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://your-domain.com' 
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://your-domain.com'
     : ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true
 }));
 app.use(express.json());
+
+// Serve static files for uploads
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Initialize Database
 initializeDatabase();
@@ -41,6 +51,8 @@ app.use('/api/referrals', referralsRoutes);
 app.use('/api/broadcasts', broadcastsRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -50,7 +62,7 @@ app.get('/api/health', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Something went wrong!',
     message: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
