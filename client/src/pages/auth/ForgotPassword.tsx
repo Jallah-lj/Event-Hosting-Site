@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Mail, CheckCircle } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useToast } from '../../components/Toast';
+import AnimatedBackground from '../../components/AnimatedBackground';
 
 const ForgotPassword: React.FC = () => {
   const { addToast } = useToast();
@@ -24,8 +25,9 @@ const ForgotPassword: React.FC = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 pattern-bg">
-        <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-liberia-blue via-blue-200 to-liberia-red/30 relative overflow-hidden">
+        <AnimatedBackground />
+        <div className="bg-white/90 p-10 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 backdrop-blur-xl">
           <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8" />
           </div>
@@ -44,16 +46,17 @@ const ForgotPassword: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 pattern-bg relative">
-      <div className="absolute top-6 left-6">
-        <Link to="/auth/signin" className="text-white flex items-center hover:underline bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-liberia-blue via-blue-200 to-liberia-red/30 relative overflow-hidden">
+      <AnimatedBackground />
+      <div className="absolute top-6 left-6 z-10">
+        <Link to="/auth/signin" className="text-white flex items-center hover:underline bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm shadow-lg">
           <ArrowLeft size={16} className="mr-1" /> Back to Sign In
         </Link>
       </div>
       
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-4 border-liberia-blue z-10">
+      <div className="bg-white/90 p-10 rounded-3xl shadow-2xl w-full max-w-md border-t-4 border-liberia-red z-10 backdrop-blur-xl">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-liberia-blue text-white rounded-full flex items-center justify-center mx-auto mb-4 font-serif font-bold text-2xl border-4 border-gray-100">
+          <div className="w-16 h-16 bg-gradient-to-br from-liberia-blue to-liberia-red text-white rounded-full flex items-center justify-center mx-auto mb-4 font-serif font-bold text-2xl border-4 border-gray-100 shadow-lg">
             LC
           </div>
           <h2 className="text-2xl font-serif font-bold text-gray-900">Forgot Password?</h2>
@@ -95,3 +98,5 @@ const ForgotPassword: React.FC = () => {
     </div>
   );
 };
+
+export default ForgotPassword;

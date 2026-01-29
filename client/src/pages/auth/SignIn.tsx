@@ -5,6 +5,7 @@ import { Button } from '../../components/Button';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/Toast';
 import { getErrorMessage } from '../../services/api';
+import AnimatedBackground from '../../components/AnimatedBackground';
 
 const SignIn: React.FC = () => {
 
@@ -39,27 +40,7 @@ const SignIn: React.FC = () => {
   return (
 
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-liberia-blue via-blue-200 to-liberia-red/30 relative overflow-hidden">
-      {/* Animated background shapes */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-liberia-blue/20 rounded-full blur-3xl animate-float-slow z-0" style={{animationDelay: '0s'}} />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-liberia-red/20 rounded-full blur-3xl animate-float-slower z-0" style={{animationDelay: '2s'}} />
-      <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-liberia-blue/10 rounded-full blur-2xl animate-float-fast z-0" style={{animationDelay: '1s', transform: 'translate(-50%, -50%)'}} />
-      <style>{`
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-30px) scale(1.05); }
-        }
-        @keyframes float-slower {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(30px) scale(1.08); }
-        }
-        @keyframes float-fast {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-20px) scale(1.03); }
-        }
-        .animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
-        .animate-float-slower { animation: float-slower 12s ease-in-out infinite; }
-        .animate-float-fast { animation: float-fast 6s ease-in-out infinite; }
-      `}</style>
+      <AnimatedBackground />
 
       <div className="absolute top-6 left-6 z-10">
         <Link to="/" className="text-white flex items-center hover:underline bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm shadow-lg">
