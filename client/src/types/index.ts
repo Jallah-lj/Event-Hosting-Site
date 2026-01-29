@@ -65,6 +65,21 @@ export interface Sponsor {
   website?: string;
 }
 
+export interface SocialLinks {
+  twitter?: string;
+  facebook?: string;
+  instagram?: string;
+  linkedin?: string;
+  website?: string;
+}
+
+export interface ContactInfo {
+  email: string;
+  phone: string;
+  whatsapp?: string;
+  website?: string;
+}
+
 export interface Event {
   id: string;
   title: string;
@@ -86,6 +101,19 @@ export interface Event {
   refundPolicy?: string;
   ageRestriction?: string;
   sponsors?: Sponsor[];
+  contactInfo?: ContactInfo;
+  socialLinks?: SocialLinks;
+  tags?: string[];
+  isRecurring?: boolean;
+  recurringType?: 'weekly' | 'biweekly' | 'monthly';
+  recurringEndDate?: string;
+  enableWaitlist?: boolean;
+  earlyBirdEndDate?: string;
+  isDraft?: boolean;
+  schedule?: any[];
+  speakers?: any[];
+  faqs?: any[];
+  promoCodes?: any[];
 }
 
 export interface Ticket {

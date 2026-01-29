@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  BarChart3, TrendingUp, TrendingDown, Users, Calendar, DollarSign, 
+import {
+  ChartBar, TrendingUp, TrendingDown, Users, Calendar, DollarSign,
   Ticket, Activity, ArrowUp, ArrowDown, Download, RefreshCw,
   PieChart, LineChart, Globe, Clock
 } from 'lucide-react';
@@ -163,7 +163,7 @@ const AdminAnalytics: React.FC = () => {
 
   const handleExport = () => {
     if (!data) return;
-    
+
     const csvContent = [
       ['Metric', 'Value', 'Growth'],
       ['Total Users', data.overview.totalUsers, `${data.overview.userGrowth}%`],
@@ -214,7 +214,7 @@ const AdminAnalytics: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-serif font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <BarChart3 className="w-7 h-7 text-liberia-blue" />
+            <ChartBar className="w-7 h-7 text-liberia-blue" />
             Platform Analytics
           </h1>
           <p className="text-gray-500 dark:text-gray-400">Comprehensive insights and performance metrics</p>
@@ -225,11 +225,10 @@ const AdminAnalytics: React.FC = () => {
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}
-                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                  timeRange === range
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${timeRange === range
                     ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow'
                     : 'text-gray-600 dark:text-gray-300 hover:text-gray-900'
-                }`}
+                  }`}
               >
                 {range === 'all' ? 'All' : range.toUpperCase()}
               </button>
@@ -364,9 +363,8 @@ const AdminAnalytics: React.FC = () => {
             ) : (
               data.topEvents.map((event, index) => (
                 <div key={event.id} className="flex items-center gap-4">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                    index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-600' : 'bg-gray-300'
-                  }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-600' : 'bg-gray-300'
+                    }`}>
                     {index + 1}
                   </div>
                   <div className="flex-1 min-w-0">

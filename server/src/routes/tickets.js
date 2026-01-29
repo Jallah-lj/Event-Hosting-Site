@@ -130,31 +130,40 @@ router.get('/', authenticateToken, (req, res) => {
 });
 
 // Validate ticket (for scanner app)
-router.post('/validate', authenticateToken, requireRole('ORGANIZER', 'ADMIN', 'SCANNER'), (req, res) => {
+router.post('/validate', authenticateToken, requireRole('ORGANIZER', 'ADMIN', 'SCANNER', 'MODERATOR'), (req, res) => {
   try {
     const { ticketId, eventId } = req.body;
 
-    if (!ticketId || !eventId) {
-      return res.status(400).json({ valid: false, message: 'Ticket ID and Event ID are required' });
+    if (!ticketId) {
+      return res.status(400).json({ valid: false, message: 'Ticket ID is required' });
     }
 
-    const ticket = db.prepare(`
-      SELECT t.*, u.name as user_name, u.email as user_email, e.organizer_id 
+    let query = `
+      SELECT t.*, u.name as user_name, u.email as user_email, e.organizer_id, e.title as event_title 
       FROM tickets t
       JOIN events e ON t.event_id = e.id
       LEFT JOIN users u ON t.user_id = u.id
-      WHERE t.id = ? AND t.event_id = ?
-    `).get(ticketId, eventId);
+      WHERE t.id = ?
+    `;
+    let params = [ticketId];
+
+    if (eventId && eventId !== 'ALL') {
+      query += ` AND t.event_id = ?`;
+      params.push(eventId);
+    }
+
+    const ticket = db.prepare(query).get(...params);
 
     if (!ticket) {
-      return res.json({ valid: false, message: 'Ticket not found for this event' });
+      return res.json({ valid: false, message: 'Ticket not found' });
     }
 
     // Verify ownership or team permission
     const isOrganizer = req.user.id === ticket.organizer_id;
     const isTeamMember = req.user.role === 'SCANNER' && req.user.organizerId === ticket.organizer_id;
+    const isHighPrivilege = ['ADMIN', 'MODERATOR'].includes(req.user.role);
 
-    if (req.user.role !== 'ADMIN' && !isOrganizer && !isTeamMember) {
+    if (!isHighPrivilege && !isOrganizer && !isTeamMember) {
       return res.status(403).json({ error: 'Not authorized to validate tickets for this event' });
     }
 

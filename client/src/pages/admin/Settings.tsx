@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Save, Globe, DollarSign, Shield, Bell, Mail, Palette, 
-  Database, FileText, Lock, Clock, Upload, Download, 
-  AlertTriangle, CheckCircle, Key, Eye, EyeOff
+import {
+  Save, Globe, DollarSign, Shield, Bell, Mail, Palette,
+  Database, FileText, Lock, Clock, Upload, Download,
+  TriangleAlert, CircleCheck, Key, Eye, EyeOff
 } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useToast } from '../../components/Toast';
@@ -222,11 +222,10 @@ const AdminSettings: React.FC = () => {
               <button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  activeSection === section.id
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${activeSection === section.id
                     ? 'bg-liberia-blue text-white'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 <section.icon className="w-5 h-5" />
                 <span className="font-medium">{section.label}</span>
@@ -269,7 +268,7 @@ const AdminSettings: React.FC = () => {
                 </div>
                 <label className="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
                   <div className="flex items-center gap-3">
-                    <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                    <TriangleAlert className="w-5 h-5 text-yellow-600" />
                     <div>
                       <span className="font-medium text-gray-900 dark:text-white">Maintenance Mode</span>
                       <p className="text-sm text-gray-500 dark:text-gray-400">Disable access to the platform</p>
@@ -728,19 +727,19 @@ const AdminSettings: React.FC = () => {
                 <div className="p-4 rounded-lg border border-gray-200 dark:border-gray-700">
                   <p className="text-sm text-gray-500 mb-2">Preview</p>
                   <div className="flex items-center gap-4">
-                    <div 
+                    <div
                       className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold"
                       style={{ backgroundColor: settings.primaryColor }}
                     >
                       LC
                     </div>
-                    <button 
+                    <button
                       className="px-4 py-2 rounded-lg text-white font-medium"
                       style={{ backgroundColor: settings.primaryColor }}
                     >
                       Primary Button
                     </button>
-                    <button 
+                    <button
                       className="px-4 py-2 rounded-lg text-white font-medium"
                       style={{ backgroundColor: settings.secondaryColor }}
                     >
@@ -957,8 +956,8 @@ const AdminSettings: React.FC = () => {
                     These actions are irreversible. Please proceed with caution.
                   </p>
                   <div className="flex gap-3">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30"
                       onClick={() => {
                         if (confirm('Are you sure you want to clear all cache? This may temporarily slow down the platform.')) {
@@ -968,8 +967,8 @@ const AdminSettings: React.FC = () => {
                     >
                       Clear Cache
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       className="text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30"
                       onClick={() => {
                         if (confirm('Are you sure you want to reset all settings to default? This cannot be undone.')) {

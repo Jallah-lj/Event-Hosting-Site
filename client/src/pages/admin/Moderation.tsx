@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flag, AlertTriangle, CheckCircle, XCircle, Eye, MessageSquare, Calendar, User, Search, Filter, Clock, Shield, Ban } from 'lucide-react';
+import { Flag, TriangleAlert, CircleCheck, CircleX, Eye, MessageSquare, Calendar, User, Search, Filter, Clock, Shield, Ban } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useToast } from '../../components/Toast';
 import api, { getErrorMessage } from '../../services/api';
@@ -115,8 +115,8 @@ const AdminModeration: React.FC = () => {
   const handleResolveReport = async (reportId: string, action: 'resolve' | 'dismiss') => {
     try {
       // In production, this would call an API endpoint
-      setReports(reports.map(r => 
-        r.id === reportId 
+      setReports(reports.map(r =>
+        r.id === reportId
           ? { ...r, status: action === 'resolve' ? 'RESOLVED' : 'DISMISSED', resolution: resolutionNote }
           : r
       ));
@@ -152,7 +152,7 @@ const AdminModeration: React.FC = () => {
     const matchesStatus = filterStatus === 'all' || report.status === filterStatus;
     const matchesType = filterType === 'all' || report.type === filterType;
     const matchesSearch = report.targetName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          report.reason.toLowerCase().includes(searchQuery.toLowerCase());
+      report.reason.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesStatus && matchesType && matchesSearch;
   });
 
@@ -221,7 +221,7 @@ const AdminModeration: React.FC = () => {
         </div>
         <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl p-6 text-white">
           <div className="flex items-center justify-between mb-2">
-            <CheckCircle className="w-8 h-8 opacity-80" />
+            <CircleCheck className="w-8 h-8 opacity-80" />
             <span className="text-2xl font-black">{stats.resolved}</span>
           </div>
           <div className="text-green-100 text-sm">Resolved</div>
@@ -238,18 +238,17 @@ const AdminModeration: React.FC = () => {
       {/* Tabs */}
       <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
         {[
-          { id: 'reports', label: 'User Reports', icon: AlertTriangle },
+          { id: 'reports', label: 'User Reports', icon: TriangleAlert },
           { id: 'flagged', label: 'Pending Events', icon: Flag },
           { id: 'actions', label: 'Recent Actions', icon: Shield }
         ].map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? 'border-liberia-blue text-liberia-blue'
-                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'
-            }`}
+            className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${activeTab === tab.id
+              ? 'border-liberia-blue text-liberia-blue'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'
+              }`}
           >
             <tab.icon className="w-4 h-4" />
             {tab.label}
@@ -299,7 +298,7 @@ const AdminModeration: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             {filteredReports.length === 0 ? (
               <div className="p-12 text-center">
-                <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-4" />
+                <CircleCheck className="w-12 h-12 mx-auto text-green-500 mb-4" />
                 <p className="text-gray-500 dark:text-gray-400">No reports to review</p>
               </div>
             ) : (
@@ -308,11 +307,10 @@ const AdminModeration: React.FC = () => {
                   <div key={report.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-4">
-                        <div className={`p-2 rounded-lg ${
-                          report.type === 'EVENT' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30' :
+                        <div className={`p-2 rounded-lg ${report.type === 'EVENT' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30' :
                           report.type === 'USER' ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30' :
-                          'bg-gray-100 text-gray-600 dark:bg-gray-700'
-                        }`}>
+                            'bg-gray-100 text-gray-600 dark:bg-gray-700'
+                          }`}>
                           {typeIcons[report.type]}
                         </div>
                         <div>
@@ -352,7 +350,7 @@ const AdminModeration: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           {flaggedEvents.length === 0 ? (
             <div className="p-12 text-center">
-              <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-4" />
+              <CircleCheck className="w-12 h-12 mx-auto text-green-500 mb-4" />
               <p className="text-gray-500 dark:text-gray-400">No events pending approval</p>
             </div>
           ) : (
@@ -374,11 +372,11 @@ const AdminModeration: React.FC = () => {
                         onClick={() => handleRejectEvent(event.id)}
                         className="text-red-600 hover:bg-red-50"
                       >
-                        <XCircle className="w-4 h-4 mr-1" />
+                        <CircleX className="w-4 h-4 mr-1" />
                         Reject
                       </Button>
                       <Button size="sm" onClick={() => handleApproveEvent(event.id)}>
-                        <CheckCircle className="w-4 h-4 mr-1" />
+                        <CircleCheck className="w-4 h-4 mr-1" />
                         Approve
                       </Button>
                     </div>
@@ -404,10 +402,9 @@ const AdminModeration: React.FC = () => {
                 .filter(r => r.status === 'RESOLVED' || r.status === 'DISMISSED')
                 .map(report => (
                   <div key={report.id} className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div className={`p-2 rounded-full ${
-                      report.status === 'RESOLVED' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {report.status === 'RESOLVED' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+                    <div className={`p-2 rounded-full ${report.status === 'RESOLVED' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
+                      }`}>
+                      {report.status === 'RESOLVED' ? <CircleCheck className="w-5 h-5" /> : <CircleX className="w-5 h-5" />}
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-white">

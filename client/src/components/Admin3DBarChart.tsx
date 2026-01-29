@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, Users, Calendar, DollarSign, Ticket, Activity } from 'lucide-react';
+import { ChartBar, TrendingUp, Users, Calendar, DollarSign, Ticket, Activity } from 'lucide-react';
 import api from '../services/api';
 
 interface PlatformMetric {
@@ -45,13 +45,12 @@ const Admin3DBarChart: React.FC = () => {
       // Calculate metrics
       const totalUsers = users.length;
       const activeUsers = users.filter((u: any) => u.status === 'Active').length;
-      const totalEvents = events.length;
       const approvedEvents = events.filter((e: any) => e.status === 'APPROVED').length;
       const totalRevenue = transactions
         .filter((t: any) => t.type === 'SALE')
         .reduce((sum: number, t: any) => sum + t.amount, 0);
       const totalTickets = tickets.length;
-      const usedTickets = tickets.filter((t: any) => t.status === 'USED').length;
+      const usedTickets = tickets.filter((t: any) => t.used === true || t.status === 'USED').length;
 
       // Calculate engagement rate
       const engagementRate = totalUsers > 0 ? Math.round((activeUsers / totalUsers) * 100) : 0;
@@ -83,7 +82,7 @@ const Admin3DBarChart: React.FC = () => {
           icon: <Ticket className="w-5 h-5" />
         },
         {
-          label: 'Tickets Used',
+          label: 'Check-ins',
           value: usedTickets,
           color: 'from-red-500 to-rose-600',
           icon: <Activity className="w-5 h-5" />
@@ -104,7 +103,7 @@ const Admin3DBarChart: React.FC = () => {
         { label: 'Active Events', value: 0, color: 'from-green-500 to-emerald-600', icon: <Calendar className="w-5 h-5" /> },
         { label: 'Revenue', value: 0, color: 'from-yellow-500 to-orange-500', icon: <DollarSign className="w-5 h-5" />, prefix: '$' },
         { label: 'Tickets Sold', value: 0, color: 'from-purple-500 to-pink-600', icon: <Ticket className="w-5 h-5" /> },
-        { label: 'Tickets Used', value: 0, color: 'from-red-500 to-rose-600', icon: <Activity className="w-5 h-5" /> },
+        { label: 'Check-ins', value: 0, color: 'from-red-500 to-rose-600', icon: <Activity className="w-5 h-5" /> },
         { label: 'Engagement', value: 0, color: 'from-cyan-500 to-teal-600', icon: <TrendingUp className="w-5 h-5" />, suffix: '%' }
       ]);
     } finally {
@@ -140,7 +139,7 @@ const Admin3DBarChart: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-gradient-to-br from-liberia-blue to-blue-600 rounded-lg text-white">
-            <BarChart3 className="w-6 h-6" />
+            <ChartBar className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Platform Overview</h3>
@@ -154,7 +153,7 @@ const Admin3DBarChart: React.FC = () => {
       </div>
 
       {/* 3D Bar Chart Container */}
-      <div 
+      <div
         className="relative h-80 flex items-end justify-center gap-4 md:gap-8 px-4"
         style={{ perspective: '1000px' }}
       >
@@ -174,7 +173,7 @@ const Admin3DBarChart: React.FC = () => {
         {metrics.map((metric, index) => {
           const height = getBarHeight(metric.value);
           const isHovered = hoveredIndex === index;
-          
+
           return (
             <div
               key={index}
@@ -187,10 +186,9 @@ const Admin3DBarChart: React.FC = () => {
               }}
             >
               {/* Tooltip */}
-              <div 
-                className={`absolute -top-16 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap z-20 transition-all duration-200 ${
-                  isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
-                }`}
+              <div
+                className={`absolute -top-16 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap z-20 transition-all duration-200 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+                  }`}
               >
                 <div className="font-bold">
                   {metric.prefix}{metric.value.toLocaleString()}{metric.suffix}
@@ -214,12 +212,12 @@ const Admin3DBarChart: React.FC = () => {
                   className={`absolute inset-0 bg-gradient-to-t ${metric.color} rounded-t-lg shadow-lg`}
                   style={{
                     transform: 'translateZ(8px)',
-                    boxShadow: isHovered 
-                      ? '0 20px 40px -10px rgba(0, 0, 0, 0.3)' 
+                    boxShadow: isHovered
+                      ? '0 20px 40px -10px rgba(0, 0, 0, 0.3)'
                       : '0 10px 20px -5px rgba(0, 0, 0, 0.2)'
                   }}
                 />
-                
+
                 {/* Right face */}
                 <div
                   className={`absolute top-0 right-0 w-4 h-full bg-gradient-to-t ${metric.color} opacity-70 rounded-tr-lg`}
@@ -229,7 +227,7 @@ const Admin3DBarChart: React.FC = () => {
                     filter: 'brightness(0.7)'
                   }}
                 />
-                
+
                 {/* Top face */}
                 <div
                   className={`absolute top-0 left-0 right-0 h-4 bg-gradient-to-r ${metric.color} rounded-t-lg`}
@@ -241,17 +239,16 @@ const Admin3DBarChart: React.FC = () => {
                 />
 
                 {/* Shine effect */}
-                <div 
+                <div
                   className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent rounded-t-lg"
                   style={{ transform: 'translateZ(9px)' }}
                 />
               </div>
 
               {/* Icon */}
-              <div 
-                className={`mt-3 p-2 rounded-lg bg-gradient-to-br ${metric.color} text-white shadow-md transition-transform duration-200 ${
-                  isHovered ? 'scale-110' : 'scale-100'
-                }`}
+              <div
+                className={`mt-3 p-2 rounded-lg bg-gradient-to-br ${metric.color} text-white shadow-md transition-transform duration-200 ${isHovered ? 'scale-110' : 'scale-100'
+                  }`}
               >
                 {metric.icon}
               </div>
@@ -274,13 +271,12 @@ const Admin3DBarChart: React.FC = () => {
       <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {metrics.map((metric, index) => (
-            <div 
+            <div
               key={index}
-              className={`flex items-center gap-2 p-2 rounded-lg transition-colors cursor-pointer ${
-                hoveredIndex === index 
-                  ? 'bg-gray-100 dark:bg-gray-700' 
+              className={`flex items-center gap-2 p-2 rounded-lg transition-colors cursor-pointer ${hoveredIndex === index
+                  ? 'bg-gray-100 dark:bg-gray-700'
                   : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
-              }`}
+                }`}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >

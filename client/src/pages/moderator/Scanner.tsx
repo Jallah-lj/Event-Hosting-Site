@@ -32,7 +32,7 @@ const ModeratorScanner: React.FC = () => {
       const today = new Date().toISOString().split('T')[0];
       const res = await api.get('/tickets');
       const tickets = res.data;
-      const todayScans = tickets.filter((t: any) => 
+      const todayScans = tickets.filter((t: any) =>
         t.used && t.checkInTime && t.checkInTime.startsWith(today)
       );
       setRecentScans(todayScans.length);
@@ -50,8 +50,8 @@ const ModeratorScanner: React.FC = () => {
 
     setScanning(true);
     try {
-      const res = await api.post('/tickets/validate', { ticketCode: ticketCode.trim() });
-      
+      const res = await api.post('/tickets/validate', { ticketId: ticketCode.trim(), eventId: 'ALL' });
+
       const result: ScanResult = {
         success: true,
         message: 'Ticket validated successfully!',
@@ -127,7 +127,7 @@ const ModeratorScanner: React.FC = () => {
           <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl inline-block mb-6">
             <QrCode className="w-16 h-16 text-gray-400 dark:text-gray-500" />
           </div>
-          
+
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Enter Ticket Code
           </h2>
@@ -169,7 +169,7 @@ const ModeratorScanner: React.FC = () => {
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <h3 className="font-semibold text-gray-900 dark:text-white">Recent Scans</h3>
         </div>
-        
+
         {scanResults.length === 0 ? (
           <div className="p-12 text-center">
             <Camera className="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-4" />
@@ -178,13 +178,12 @@ const ModeratorScanner: React.FC = () => {
         ) : (
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {scanResults.map((result, index) => (
-              <div 
-                key={index} 
-                className={`p-4 flex items-center gap-4 ${
-                  result.success 
-                    ? 'bg-green-50 dark:bg-green-900/10' 
+              <div
+                key={index}
+                className={`p-4 flex items-center gap-4 ${result.success
+                    ? 'bg-green-50 dark:bg-green-900/10'
                     : 'bg-red-50 dark:bg-red-900/10'
-                }`}
+                  }`}
               >
                 {result.success ? (
                   <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
